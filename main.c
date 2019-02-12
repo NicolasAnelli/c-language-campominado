@@ -79,7 +79,7 @@ int main() {
 		// TODO tratar valores fora do intervalo aceito
 
 		// Processa a jogada escolhida
-		if('?' == memoria[linha_escolhida][coluna_escolhida]) {
+		if(memoria[linha_escolhida][coluna_escolhida] == '?') {
 			memoria[linha_escolhida][coluna_escolhida] = 'X';
 
 			// Se acertar o 0, perde uma vida
