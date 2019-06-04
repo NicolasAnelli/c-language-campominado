@@ -24,6 +24,17 @@ For Linux/MAC users:
 
 For Windows users, just double click on executable program.
 
+## Exercise objectives
+
+Create a board minefield with next rules:
+- Board size is 10x10
+- Player has 5 lives
+- Possible values are 0 to 3
+- Should be informed row and column for the play
+- Accumulate player points
+- Can not hit row and column twice
+- If hits zero, loses 1 live
+
 ## How to play
 Consider using a terminal size of 83x28 for a better experience. This is game consists in typing row, and a column, to get some random number on matriz. 
 

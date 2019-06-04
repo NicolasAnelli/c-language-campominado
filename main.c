@@ -1,115 +1,111 @@
-/*
- * Implementar um jogo de campo minado que atenda as premissas
- * - Tabuleiro 10x10
- * - o jogador tem 5 vidas
- * - os valores possíveis serão 0-3
- * - deve-se informar linha e coluna para a aposta
- * - acumular os pontos do jogador
- * - não pode jogar novamente linha e coluna ja informada
- * - se acertar o valor 0 perde
- */
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
 
-void cls();
+void printBoard(char memory[10][10], int board[10][10], int points, int lives);
+void clearScreen();
 
 int main() {
 
-	char memoria[10][10];
-	int tabuleiro[10][10];
-	int vidas = 5;
-	int pontos = 0, jogadas = 0;;
+	char memory[10][10];
+	int board[10][10];
+	int lives = 5;
+	int points = 0, plays = 0;;
 
 	int i, j;
-	int linha_escolhida, coluna_escolhida;
+	int c_line, c_column;
 
 	srand(time(NULL));
 
-	// Inicializa posições da memória
+	// Initializing memory positions
 	for(i=0; i<10; i++)
 		for(j=0; j<10; j++)
-			memoria[i][j] = '?';
+			memory[i][j] = '?';
 
-	// Inicializa posições do tabuleiro com números aleatórios
+	// Initializing table with random numbers lower than 4
 	for(i=0; i<10; i++)
 		for(j=0; j<10; j++)
-			tabuleiro[i][j] = rand()%4;
+			board[i][j] = rand()%4;
 
-	do {
-		cls();
+	while (1) {
 
-		printf("----------------------------------------------------------------------------------\n");
-		printf("Score: %i \t\t\tMine Field\t\t\t\t Lives: %i \n", pontos, vidas);
-		printf("----------------------------------------------------------------------------------\n");
+		clearScreen();
+		printBoard(memory, board, points, lives);
 
-		// Imprime Header das colunas
-		printf("L\\C");
-		for(i=0; i<10; i++)
-			printf("\t%i:", i);
-		printf("\n\n");
+		printf("Type the target ROW: ");
+		scanf("%i", &c_line);
 
-		// Imprime tabuleiro
-		for(i=0; i<10; i++) {
-			// Escreve o numero da linha a ser montada
-			printf("%i: \t", i);
+		clearScreen();
+		printBoard(memory, board, points, lives);
 
-			for(j=0; j<10; j++) {
-				// Se ainda não tiver sido descoberto, printa caractere '?'
-				if(memoria[i][j] == '?')
-					printf("%c \t", memoria[i][j]);
-				// senao printa o valor do tabuleiro
-				else
-					printf("%i \t", tabuleiro[i][j]);
-			}
-			printf("\n\n");
-		}
+		printf("Type the target COLUMN: ");
+		scanf("%i", &c_column);
 
-		printf("----------------------------------------------------------------------------------\n");
-		// Pergunta a jogada
-		printf("Digite a linha desejada: ");
-		scanf("%i", &linha_escolhida);
+		plays++;
 
-		printf("Digite a coluna desejada: ");
-		scanf("%i", &coluna_escolhida);
+		if(memory[c_line][c_column] == '?') {
+			memory[c_line][c_column] = 'X';
 
-		jogadas++;
-
-		// TODO tratar valores fora do intervalo aceito
-
-		// Processa a jogada escolhida
-		if(memoria[linha_escolhida][coluna_escolhida] == '?') {
-			memoria[linha_escolhida][coluna_escolhida] = 'X';
-
-			// Se acertar o 0, perde uma vida
-			if(tabuleiro[linha_escolhida][coluna_escolhida] == 0) {
-				vidas--;
+			// If hits zero, loses one live
+			if(board[c_line][c_column] == 0) {
+				lives--;
 			}
 
-			// Adiciona os pontos da posição escolhida
-			pontos += tabuleiro[linha_escolhida][coluna_escolhida];
+			// Adding points
+			points += board[c_line][c_column];
 		} else {
-			// Ja foi essa posição, fazer algo?
+			// Already hit this, should i do something?
 		}
 
-	} while(vidas > 0);
-
-	// Imprime score final
-	cls();
-	printf("Fim do jogo!\n\n");
-	printf("Voce fez %i pontos, em %i jogadas. \n\n\n", pontos, jogadas);
-
-	return 0;
+		if (lives == 0) {
+			clearScreen();
+			printf("Game over!\n\n");
+			printf("You did %i points, in %i plays. \n\n\n", points, plays);
+			return EXIT_SUCCESS;
+		}
+	}
 }
 
-void cls() {
-	// Se for windows, substituir por
-	// system("cls");
+void printBoard(char memory[10][10], int board[10][10], int points, int lives) {
 
-	// Possível outra soluçao
-	// printf("\e[1;1H\e[2J");
+	int i, j;
 
-	// Se for Mac
-	system("clear");
+	printf("----------------------------------------------------------------------------------\n");
+	printf("Score: %i \t\t\tMine Field\t\t\t\t Lives: %i \n", points, lives);
+	printf("----------------------------------------------------------------------------------\n");
+
+	// Imprime Header das colunas
+	printf("L\\C");
+	for(i=0; i<10; i++)
+		printf("\t%i:", i);
+	printf("\n\n");
+
+	// Imprime board
+	for(i=0; i<10; i++) {
+		// Escreve o numero da linha a ser montada
+		printf("%i: \t", i);
+
+		for(j=0; j<10; j++) {
+			// Se ainda não tiver sido descoberto, printa caractere '?'
+			if(memory[i][j] == '?')
+				printf("%c \t", memory[i][j]);
+			// senao printa o valor do board
+			else
+				printf("%i \t", board[i][j]);
+		}
+		printf("\n\n");
+	}
+
+	printf("----------------------------------------------------------------------------------\n");
+
+}
+
+void clearScreen() {
+#if defined(_WIN32) || defined(_WIN64)
+	system("cls");
+#endif
+#if defined(__unix__) || defined(__APPLE__) || defined(__linux__)
+	printf("\e[1;1H\e[2J");
+#endif
 }
